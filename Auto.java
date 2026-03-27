@@ -34,6 +34,13 @@ public class Auto2026 extends OpMode{
     private DcMotor leftBackMotor;
     private DcMotor rightBackMotor;
 
+    double lastLF = 0, lastRF = 0, lastLB = 0, lastRB = 0;
+
+    double encoderX = 1; // start pos
+    double encoderY = 1;
+
+    double TICKS_TO_METERS = 0.0005;
+
     private DcMotorEx accelMotor;
     private CRServo turret;
 
@@ -46,7 +53,7 @@ public class Auto2026 extends OpMode{
     private int RedGoalID = 2;//TEMPORARY
 
     private int goalTagID;
-    private int centerTagID = 1;//TEMPORARY
+    private int centerTagID = 23;
     private int OppTagID;
 
     private double[] blueGoalPos = {2,2};
@@ -55,14 +62,17 @@ public class Auto2026 extends OpMode{
 
 
     private double driveSpeed = 2;
-    private double[] currentPosition = {1,1} //starPos
+    private double[] currentPosition = {1,1}; //starPos
+    
+    private double[] p1 = {0,0};
 
-    private int state;
+    private int state = 0;
 
     @Override
     public void init(){
 
         teamSel = new teamSelect();
+        teamSel.TeamIdentify();
 
         turretCam = new AprilTagWebcam();
         sideCam = new AprilTagWebcam();
@@ -80,34 +90,34 @@ public class Auto2026 extends OpMode{
     @Override
     public void loop(){
 
-        currentPosition = UpdatePos()
+        turretUpdate();
+
+        currentPosition = UpdatePos();
 
         switch(state){
 
             case 0:
-                if(MoveTo(0, 0)){
+                if(MoveTo(p1)){
                     state++;
                 }
                 break;
 
             case 1:
-                if(MoveTo(1, 1)){
-                    state++;
-                }
-                break;
-
-            case 2:
                 stopMotors();
                 break;
-    }
+        }
     }
 
-    public void MoveTo(double[] targetPos){
+    public boolean MoveTo(double[] targetPos){
+
         double currentX = currentPosition[0];
         double currentY = currentPosition[1];
 
-        double errorX = targetX - currentX;
-        double errorY = targetY - currentY;
+        double errorX = targetPos[0] - currentX;
+        double errorY = targetPos[1] - currentY;
+
+        telemetry.addData("errorX", errorX);
+        telemetry.addData("errorY", errorY);
 
         double tolerance = 0.2;
 
@@ -146,47 +156,55 @@ public class Auto2026 extends OpMode{
         return false;
     }
 
-    public void UpdatePos(){
+    public double[] UpdatePos(){
+
+        updateEncoders();
+
         AprilTagDetection centerTag = sideCam.getTagBySpecificId(centerTagID);
         AprilTagDetection redTag = sideCam.getTagBySpecificId(RedGoalID);
         AprilTagDetection blueTag = sideCam.getTagBySpecificId(BlueGoalID);
 
-        if (centerTag == null && goalTag == null && OppTag == null){
-            telemetry.addLine("No tag identified");
-        }
+        ArrayList<Double> positionX = new ArrayList<>();
+        ArrayList<Double> positionY = new ArrayList<>();
 
-        ArrayList<Double> positionX = new ArrayList<Double>();
-        ArrayList<Double> positionY = new ArrayList<Double>();
-
-        if(centerTagTag != null){
+        if(centerTag != null){
             positionX.add(centerPos[0] - centerTag.ftcPose.x);
-            positionY.add(centerPos[1] -  centerTag.ftcPose.y);
+            positionY.add(centerPos[1] - centerTag.ftcPose.y);
         }
-        
-        
+
         if(redTag != null){
             positionX.add(redGoalPos[0] - redTag.ftcPose.x);
-            positionY.add(redGoalPos[1] redTag.ftcPose.y);
+            positionY.add(redGoalPos[1] - redTag.ftcPose.y);
         }
 
-        
         if(blueTag != null){
             positionX.add(blueGoalPos[0] - blueTag.ftcPose.x);
             positionY.add(blueGoalPos[1] - blueTag.ftcPose.y);
         }
 
-        double totalX = 0;
-        for (int i = 0; i < positionX.size(); i++){
-            totalX += positionX.get(i)
+        if(positionX.size() == 0){
+            telemetry.addLine("Using Encoders Only");
+            return new double[]{encoderX, encoderY};
         }
 
-        double totalY = 0;
-        for (int i = 0; i < positionY.size(); i++) {
-            totalY += positionY.get(i);
-        }
+        double totalX = 0, totalY = 0;
 
-        return new double[]{totalX/positionX.size(),totalY/positionY.size()};
+        for(double x : positionX) totalX += x;
+        for(double y : positionY) totalY += y;
+
+        double tagX = totalX / positionX.size();
+        double tagY = totalY / positionY.size();
+
+        double alpha = 0.7; // trust tags more
+
+        encoderX = alpha * tagX + (1 - alpha) * encoderX;
+        encoderY = alpha * tagY + (1 - alpha) * encoderY;
+
+        telemetry.addLine("Using Tag Fusion");
+
+        return new double[]{encoderX, encoderY};
     }
+
 
     public void TeamIdentify(){
         if (teamSel.GetAlliance().equals("BLUE")){
@@ -236,6 +254,40 @@ public class Auto2026 extends OpMode{
             turret.setPower(0);
             telemetry.addData("Servo Power", 0);
         }
+    }
+
+    public void updateEncoders(){
+
+        double lf = leftFrontMotor.getCurrentPosition();
+        double rf = rightFrontMotor.getCurrentPosition();
+        double lb = leftBackMotor.getCurrentPosition();
+        double rb = rightBackMotor.getCurrentPosition();
+
+        double dlf = lf - lastLF;
+        double drf = rf - lastRF;
+        double dlb = lb - lastLB;
+        double drb = rb - lastRB;
+
+        lastLF = lf;
+        lastRF = rf;
+        lastLB = lb;
+        lastRB = rb;
+
+        // Mecanum motion
+        double dx = (dlf - drf - dlb + drb) / 4.0;
+        double dy = (dlf + drf + dlb + drb) / 4.0;
+
+        dx *= TICKS_TO_METERS;
+        dy *= TICKS_TO_METERS;
+
+        // Convert to field-centric
+        double heading = Math.toRadians(getRotation());
+
+        double fieldX = dx * Math.cos(heading) - dy * Math.sin(heading);
+        double fieldY = dx * Math.sin(heading) + dy * Math.cos(heading);
+
+        encoderX += fieldX;
+        encoderY += fieldY;
     }
     
     public double getRotation(){
