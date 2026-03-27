@@ -19,11 +19,13 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
+import org.firstinspires.ftc.teamcode.mechanisms.teamSelect;
 
 @TeleOp(name = "TeleOp 2026")
 public class TeleOp2026 extends OpMode{
 
     AprilTagWebcam turretCam, sideCam;
+    teamSelect teamSel;
 
     private Blinker control_Hub;
 
@@ -42,14 +44,20 @@ public class TeleOp2026 extends OpMode{
 
     private double rotatedFromIdentity;
 
-    private int goalTagID = 0;
-    private int centerTagID = 1;
-    private int OppTagID = 2;
+    private int BlueGoalID = 0;//TEMPORARY
+    private int RedGoalID = 2;//TEMPORARY
+
+    private int goalTagID;
+    private int centerTagID = 23;
+    private int OppTagID;
 
     private double driveSpeed = 2;
 
     @Override
     public void init(){
+
+        teamSel = new teamSelect();
+        teamSel.TeamIdentify();
 
         turretCam = new AprilTagWebcam();
         sideCam = new AprilTagWebcam();
@@ -95,6 +103,17 @@ public class TeleOp2026 extends OpMode{
         
         }
         else{telemetry.addLine("Press Dpad-Down to activate");}
+    }
+
+    public void TeamIdentify(){
+        if (teamSel.GetAlliance().equals("BLUE")){
+            goalTagID = BlueGoalID;
+            OppTagID = RedGoalID;
+        }
+        else{
+            goalTagID = RedGoalID;
+            OppTagID = BlueGoalID;
+        }
     }
 
     public void hardwareInit(HardwareMap hdwr){
