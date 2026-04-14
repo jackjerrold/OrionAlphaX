@@ -30,7 +30,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
 
 @TeleOp(name = "Odometry Opmode File")
-public class Odomerty_TeleOp extends OpMode {
+public class Odometry_TeleOp extends OpMode {
 
     GoBildaPinpointDriver odo; //Get the gobilda repository
 
