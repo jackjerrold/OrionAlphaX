@@ -25,5 +25,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @Autonomous(name = "AUTO 2026")
 public class Auto2026 extends OpMode {
 
-    
+    public void init(){
+
+    }
+
+    public void loop() {
+
+    }
 }
