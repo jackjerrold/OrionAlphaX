@@ -1,3 +1,6 @@
+//We could make it so that the robot shoots instantly when it knows its on a shooting line and sees the goal
+
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -118,6 +121,10 @@ public class Auto2026 extends OpMode{
                 stopMotors();
                 break;
 
+            case SHOOT_TO_GOAL:
+                flywheel.setVelocity
+                break;
+                
             case MOVE_OFF_LINE:
 
                 break;
