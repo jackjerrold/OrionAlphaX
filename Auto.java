@@ -57,8 +57,18 @@ public class Auto2026 extends OpMode{
     private double driveSpeed = 2;
     private double[] currentPosition = {1,1} //starPos
 
-    private int state;
+    enum state { //Enum used to have clear naming
+        MOVE_TO_SHOOTING_ZONE //Intersect the line to shoot (heading towards the goal)
+        MOVE_TO_GATE //Hitting the gate to release the ball (heading so that gate can be hit and intake)
+        MOVE_TO_BALL_1 //Lines where the balls are initially on the field (3 Lines)
+        MOVE_TO_BALL_2
+        MOVE_TO_BALL_3
 
+        SHOOT_TO_GOAL //For the begining where you instantly shoot (may be removed)
+
+        MOVE_OFF_LINE //For the end when you get extra 3 points for not ending on the shooting line
+    }
+        
     @Override
     public void init(){
 
@@ -84,20 +94,32 @@ public class Auto2026 extends OpMode{
 
         switch(state){
 
-            case 0:
+            case MOVE_TO_SHOOTING_ZONE:
                 if(MoveTo(0, 0)){
                     state++;
                 }
                 break;
 
-            case 1:
+            case MOVE_TO_GATE:
                 if(MoveTo(1, 1)){
                     state++;
                 }
                 break;
 
-            case 2:
+            case MOVE_TO_BALL_1:
                 stopMotors();
+                break;
+                
+            case MOVE_TO_BALL_2:
+                stopMotors();
+                break;
+                
+            case MOVE_TO_BALL_3:
+                stopMotors();
+                break;
+
+            case MOVE_OFF_LINE:
+
                 break;
     }
     }
