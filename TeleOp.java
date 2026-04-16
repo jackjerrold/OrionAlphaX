@@ -32,6 +32,9 @@ public class TeleOp2026 extends OpMode{
     private DcMotor leftBackMotor;
     private DcMotor rightBackMotor;
 
+    private DcMotor intakeMotor;
+    private DcMotor flywheelMotor;
+
     private DcMotorEx accelMotor;
     private CRServo turret;
 
@@ -92,7 +95,29 @@ public class TeleOp2026 extends OpMode{
             leftFrontMotor.setPower(lfa);
             rightBackMotor.setPower(rba);
             leftBackMotor.setPower(lba);
+
+
+            boolean reverseIntake = gamepad1.a;
+            if (reverseIntake) {
+                intakeMotor.setPower(-(gamepad1.left_trigger));
+            } else {
+                intakeMotor.setPower(gamepad1.left_trigger);
+            }
+            // Flywheel code
+            if (gamepad1.right_trigger > 0.1) {
+                flywheelTargetPower = gamepad1.right_trigger;
+            } else {
+                flywheelTargetPower = 0.0;
+            }
         
+            if (flywheelCurrentPower < flywheelTargetPower) {
+                flywheelCurrentPower += flywheelAccel;
+            } else if (flywheelCurrentPower > flywheelTargetPower) {
+                flywheelCurrentPower -= flywheelAccel;
+            }
+
+            flywheelCurrentPower = Math.max(0.0, Math.min(1.0, flywheelCurrentPower));
+            flywheelMotor.setPower(flywheelCurrentPower);
         }
         else{telemetry.addLine("Press Dpad-Down to activate");}
     }
@@ -105,6 +130,20 @@ public class TeleOp2026 extends OpMode{
         rightFrontMotor = hdwr.get(DcMotor.class, "rf");
         rightBackMotor = hdwr.get(DcMotor.class, "rb");
 
+        intakeMotor   = hdwr.get(DcMotor.class, "intakeMotor");
+        flywheelMotor = hdwr.get(DcMotor.class, "flywheelMotor");
+
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        
         imu = hardwareMap.get(IMU.class, "IMU");
         IMU.Parameters  parameters;
         parameters = new IMU.Parameters(
