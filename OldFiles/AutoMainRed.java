@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Auto Main")
-public class AutoMainBlue extends LinearOpMode {
+@Autonomous(name="AutoMain Red")
+public class AutoMainRed extends LinearOpMode {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotor intakeMotor;
     private DcMotorEx flywheelMotor;
