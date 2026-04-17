@@ -1,0 +1,2 @@
+Dont make code for pedro-pathing, cause theres no point. Theres a visualiser that does everything for you. 
+We just need tuning for the constants file i think
