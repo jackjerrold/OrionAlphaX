@@ -20,8 +20,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoMain Red")
-public class AutoMainRed extends LinearOpMode {
+@Autonomous(name="Simple Auto")
+public class Simple_Auto extends LinearOpMode {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotor intakeMotor;
     private DcMotorEx flywheelMotor;
@@ -29,6 +29,7 @@ public class AutoMainRed extends LinearOpMode {
 
     // Flywheel PIDF for velocity control
     private final double flywheelTargetRPM = 6000;
+    private final double flywheelP = 0.1;
     private final double flywheelF = 12.0 / flywheelTargetRPM;
     
     static final double TICKS_PER_REV = 28;
@@ -191,7 +192,7 @@ public class AutoMainRed extends LinearOpMode {
 
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0, 0, 0, flywheelF); 
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(flywheelP, 0, 0, flywheelF); 
         flywheelMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         
         double driveSpeed = 0.6; 
