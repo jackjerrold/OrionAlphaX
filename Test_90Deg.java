@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Test_90Deg", group = "Autonomous")
 @Configurable // Panels
-public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start with a number
+public class Test_90Deg extends OpMode {
 
   private TelemetryManager panelsTelemetry;
   public Follower follower;
@@ -27,9 +27,8 @@ public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start wi
   public void init() {
     panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     follower = Constants.createFollower(hardwareMap);
+
     
-    // FIX 2: Updated Starting Pose to match the very first point of your BezierLine (121, 123)
-    // and the starting heading of 37 degrees.
     follower.setStartingPose(new Pose(121.000, 123.000, Math.toRadians(37)));
 
     paths = new Paths(follower);
@@ -38,7 +37,7 @@ public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start wi
     panelsTelemetry.update(telemetry);
   }
 
-  // FIX 3: Added the start() method. This runs exactly ONCE when you hit the "Play" button.
+
   @Override
   public void start() {
     follower.followPath(paths.MainChain); // Tell the robot to start driving!
@@ -80,28 +79,27 @@ public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start wi
     }
   }
 
-  // FIX 4: Implemented the state machine
+
   public int autonomousPathUpdate() {
       switch (pathState) {
           case 1:
               // Check if the robot has reached the end of 'MainChain'
               if (!follower.isBusy()) {
                   stateTimer.reset(); // Start the clock the moment the path ends
-                  pathState = 2; 
+                  pathState = 2;
+                  telemetry.addLine(!follower.isBusy())
               }
               break;
             
           case 2:
-              // The "Wait" State
-              // The robot will stay here and do nothing until 1 second has passed
+              telemetry.addLine(stateTimer.seconds())
               if (stateTimer.seconds() >= 1.0) {
                   pathState = 3; 
               }
               break;
 
           case 3:
-              // Everything is done. 
-              // You can add telemetry here to say "Sequence Finished"
+              telemetry.addLine("Movement Finished")
               break;
       }
       return pathState;
