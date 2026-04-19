@@ -13,7 +13,7 @@ import com.pedropathing.geometry.Pose;
 
 @Autonomous(name = "90Deg_Test", group = "Autonomous")
 @Configurable // Panels
-public class 90Deg_Test extends OpMode {
+public class Test_90Deg extends OpMode {
   private TelemetryManager panelsTelemetry; // Panels Telemetry instance
   public Follower follower; // Pedro Pathing follower instance
   private int pathState; // Current autonomous path state (state machine)
