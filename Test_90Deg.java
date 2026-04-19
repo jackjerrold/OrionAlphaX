@@ -13,7 +13,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "90Deg_Test", group = "Autonomous")
+@Autonomous(name = "Test_90Deg", group = "Autonomous")
 @Configurable // Panels
 public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start with a number
 
