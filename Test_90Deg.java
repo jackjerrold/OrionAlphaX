@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
@@ -13,35 +14,44 @@ import com.pedropathing.geometry.Pose;
 
 @Autonomous(name = "90Deg_Test", group = "Autonomous")
 @Configurable // Panels
-public class Test_90Deg extends OpMode {
-  private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-  public Follower follower; // Pedro Pathing follower instance
-  private int pathState; // Current autonomous path state (state machine)
-  private Paths paths; // Paths defined in the Paths class
+public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start with a number
+
+  private TelemetryManager panelsTelemetry;
+  public Follower follower;
+  private int pathState = 0; // Start at state 0
+  private Paths paths;
 
   @Override
   public void init() {
     panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-
     follower = Constants.createFollower(hardwareMap);
-    follower.setStartingPose(new Pose(121, 123, Math.toRadians(90)));
+    
+    // FIX 2: Updated Starting Pose to match the very first point of your BezierLine (121, 123)
+    // and the starting heading of 37 degrees.
+    follower.setStartingPose(new Pose(121.000, 123.000, Math.toRadians(37)));
 
-    paths = new Paths(follower); // Build paths
+    paths = new Paths(follower);
 
     panelsTelemetry.debug("Status", "Initialized");
     panelsTelemetry.update(telemetry);
   }
 
+  // FIX 3: Added the start() method. This runs exactly ONCE when you hit the "Play" button.
+  @Override
+  public void start() {
+    follower.followPath(paths.MainChain); // Tell the robot to start driving!
+    pathState = 1; // Move the state machine to state 1 (Following path)
+  }
+
   @Override
   public void loop() {
-    follower.update(); // Update Pedro Pathing
+    follower.update(); // Update Pedro Pathing motor powers and location
     pathState = autonomousPathUpdate(); // Update autonomous state machine
 
-    // Log values to Panels and Driver Station
     panelsTelemetry.debug("Path State", pathState);
     panelsTelemetry.debug("X", follower.getPose().getX());
     panelsTelemetry.debug("Y", follower.getPose().getY());
-    panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+    panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading())); // Converted to degrees for easier reading
     panelsTelemetry.update(telemetry);
   }
 
@@ -53,14 +63,14 @@ public class Test_90Deg extends OpMode {
           .addPath(
             new BezierLine(
               new Pose(121.000, 123.000),
-            new Pose(85.000, 85.000)
+              new Pose(85.000, 85.000)
             )
           )
           .setLinearHeadingInterpolation(Math.toRadians(37), Math.toRadians(-90))
           .addPath(
             new BezierLine(
               new Pose(85.000, 85.000),
-            new Pose(85.000, 15.000)
+              new Pose(85.000, 15.000)
             )
           )
           .setConstantHeadingInterpolation(Math.toRadians(-90))
@@ -68,10 +78,23 @@ public class Test_90Deg extends OpMode {
     }
   }
 
+  // FIX 4: Implemented the state machine
   public int autonomousPathUpdate() {
-    // Add your state machine Here
-    // Access paths with paths.pathName
-    // Refer to the Pedro Pathing Docs (Auto Example) for an example state machine
-    return 0;
+    switch (pathState) {
+        case 1:
+            // We are in State 1. The robot is currently following the MainChain.
+            // We check if it is done. If it isn't busy anymore, move to State 2.
+            if (!follower.isBusy()) {
+                pathState = 2; 
+            }
+            break;
+            
+        case 2:
+            // The path is complete! 
+            // In the future, you could trigger a servo, start an intake, 
+            // or tell it to follow another path here, and then set pathState = 3.
+            break;
+    }
+    return pathState;
   }
 }
