@@ -24,7 +24,7 @@ public class Test_90Deg extends OpMode {
     panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
     follower = Constants.createFollower(hardwareMap);
-    follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
+    follower.setStartingPose(new Pose(121, 123, Math.toRadians(90)));
 
     paths = new Paths(follower); // Build paths
 
