@@ -21,6 +21,7 @@ public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start wi
   public Follower follower;
   private int pathState = 0; // Start at state 0
   private Paths paths;
+  private com.qualcomm.robotcore.util.ElapsedTime stateTimer = new com.qualcomm.robotcore.util.ElapsedTime();
 
   @Override
   public void init() {
@@ -81,21 +82,28 @@ public class Test_90Deg extends OpMode { // FIX 1: Renamed class to not start wi
 
   // FIX 4: Implemented the state machine
   public int autonomousPathUpdate() {
-    switch (pathState) {
-        case 1:
-            // We are in State 1. The robot is currently following the MainChain.
-            // We check if it is done. If it isn't busy anymore, move to State 2.
-            if (!follower.isBusy()) {
-                pathState = 2; 
-            }
-            break;
+      switch (pathState) {
+          case 1:
+              // Check if the robot has reached the end of 'MainChain'
+              if (!follower.isBusy()) {
+                  stateTimer.reset(); // Start the clock the moment the path ends
+                  pathState = 2; 
+              }
+              break;
             
-        case 2:
-            // The path is complete! 
-            // In the future, you could trigger a servo, start an intake, 
-            // or tell it to follow another path here, and then set pathState = 3.
-            break;
-    }
-    return pathState;
+          case 2:
+              // The "Wait" State
+              // The robot will stay here and do nothing until 1 second has passed
+              if (stateTimer.seconds() >= 1.0) {
+                  pathState = 3; 
+              }
+              break;
+
+          case 3:
+              // Everything is done. 
+              // You can add telemetry here to say "Sequence Finished"
+              break;
+      }
+      return pathState;
   }
 }
