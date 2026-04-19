@@ -87,19 +87,19 @@ public class Test_90Deg extends OpMode {
               if (!follower.isBusy()) {
                   stateTimer.reset(); // Start the clock the moment the path ends
                   pathState = 2;
-                  telemetry.addLine(!follower.isBusy())
+                  telemetry.addLine(!follower.isBusy());
               }
               break;
             
           case 2:
-              telemetry.addLine(stateTimer.seconds())
+              telemetry.addLine(stateTimer.seconds());
               if (stateTimer.seconds() >= 1.0) {
                   pathState = 3; 
               }
               break;
 
           case 3:
-              telemetry.addLine("Movement Finished")
+              telemetry.addLine("Movement Finished");
               break;
       }
       return pathState;
