@@ -36,8 +36,8 @@ public class Constants {
 
 
 public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5) //Offsets for odo pods
-            .strafePodX(0.5) //Offsets for odo pods (Tuning)
+            .forwardPodY(0) //Offsets for odo pods
+            .strafePodX(0) //Offsets for odo pods (Tuning)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("odo")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWING_ARM)
