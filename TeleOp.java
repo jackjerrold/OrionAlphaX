@@ -118,10 +118,10 @@ public class TeleOp2026 extends OpMode{
     public void hardwareInit(HardwareMap hdwr){
         turret = hdwr.get(DcMotor.class, "servo1");//CHANGE TO dcMotor
 
-        leftFrontMotor = hdwr.get(DcMotor.class, "lf");
-        leftBackMotor = hdwr.get(DcMotor.class, "lb");
-        rightFrontMotor = hdwr.get(DcMotor.class, "rf");
-        rightBackMotor = hdwr.get(DcMotor.class, "rb");
+        leftFrontMotor = hdwr.get(DcMotor.class, "frontLeft");
+        leftBackMotor = hdwr.get(DcMotor.class, "backLeft");
+        rightFrontMotor = hdwr.get(DcMotor.class, "frontRight");
+        rightBackMotor = hdwr.get(DcMotor.class, "backRight");
 
         intakeMotor   = hdwr.get(DcMotor.class, "intakeMotor");
         flywheelMotor = hdwr.get(DcMotor.class, "flywheelMotor");
