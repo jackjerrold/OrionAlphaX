@@ -203,19 +203,7 @@ public class Simple_Auto extends LinearOpMode {
         waitForStart();
 
         if(opModeIsActive()) {
-          telemetry.addLine("Rotating 360 at 0.6 speed");
-          telemetry.update();
-          rotate(driveSpeed, 360);
-
-          int tims = 5;
-          while (tims > 0) {
-            telemetry.addLine("start in time:" + tims);
-            telemetry.update();
-            sleep(1000);
-            tims = tims - 1;
-          }
-
-          
+            
           encoderDrive(-driveSpeed, 500);
             
           setFlywheelRPM(4000);
