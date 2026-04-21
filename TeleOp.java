@@ -73,8 +73,6 @@ public class TeleOp2026 extends OpMode{
     @Override
     public void loop(){
 
-        if (gamepad1.dpadDownWasPressed()){active = !active;}//FIX
-
         if (active){
 
             turretCam.update();
