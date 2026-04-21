@@ -29,15 +29,13 @@ public class TeleOp2026 extends OpMode{
     private DcMotor leftBackMotor;
     private DcMotor rightBackMotor;
 
-    private DcMotor intakeMotor;
-    private DcMotor flywheelMotor;
+    private DcMotorEx intakeMotor;
+    private DcMotorEx flywheelMotor;
 
     private DcMotorEx accelMotor;
     private DcMotorEx turret;//chage to DCMotorEx
 
     private double BackPlateAngle;//ADD
-    private Servo backPlateServoFwd;//ADD
-    private Servo backPlateServoBck;//ADD
 
     //private IMU imu;
     //private AngularVelocity myRobotAngularVelocity;
@@ -52,7 +50,9 @@ public class TeleOp2026 extends OpMode{
 
     private double driveSpeed = 2;
 
-    private int TurretRotationLimit;//ADD
+    int MIN_POS = -500;
+    int MAX_POS = 500;
+
 
     @Override
     public void init(){
@@ -108,7 +108,8 @@ public class TeleOp2026 extends OpMode{
             }
             // Flywheel
             if (gamepad1.right_trigger > 0.1) {
-                flywheelMotor.setPower(gamepad1.right_trigger);//ADD second Motor
+                flywheelMotorRight.setVelocity(1600);
+                flywheelMotorLeft.setVelocity(1600)
             }
 
         }
@@ -126,7 +127,14 @@ public class TeleOp2026 extends OpMode{
         intakeMotor   = hdwr.get(DcMotor.class, "intakeMotor");
         flywheelMotor = hdwr.get(DcMotor.class, "flywheelMotor");
 
+        flywheelMotorLeft = hdwr.get(DcMotor.class, "flywheelMotorLeft");
+        flywheelMotorRight = hdwr.get(DcMotor.class, "flywheelMotorRight");
+
+        flywheelMotorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        flywheelMotorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
