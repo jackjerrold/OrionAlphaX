@@ -178,10 +178,10 @@ public class Simple_Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
     
-        frontLeft  = hardwareMap.get(DcMotorEx.class, "lf");
-        frontRight = hardwareMap.get(DcMotorEx.class, "rf");
-        backLeft   = hardwareMap.get(DcMotorEx.class, "lb");
-        backRight  = hardwareMap.get(DcMotorEx.class, "rb");
+        frontLeft  = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        backLeft   = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backRight  = hardwareMap.get(DcMotorEx.class, "backRight");
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheelMotor");
