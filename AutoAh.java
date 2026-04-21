@@ -39,16 +39,20 @@ public class AutoAh extends LinearOpMode {
     
     static final double TICKS_PER_REV_FLYWHEEL = 28;
     static final double GEAR_RATIO_FLYWHEEL = 0.926;
-    
-    static final int sleepPeriod = 5000;
+
+    //Values to test and change for the shooting setup
+    static final int shootTime = 5000;
+    static final int reverseIntakeTime = 100;
     static final double motorPower = 1;
     static final double RPM = 3000;
 
     public void shoot() {
+        intakeMotor.setPower(-motorPower);
         setFlywheelRPM(RPM);
+        sleep(reverseIntakeTime);
         intakeMotor.setPower(motorPower);
             
-        sleep(sleepPeriod);
+        sleep(shootTime);
           
         setFlywheelRPM(0);
         intakeMotor.setPower(0);
@@ -223,29 +227,33 @@ public class AutoAh extends LinearOpMode {
         waitForStart();
 
         if(opModeIsActive()) {
-            
-            encoderDrive(-driveSpeed, 500);
-            
+
+            //Driving away from goal
+            encoderDrive(-driveSpeed, 900);
             shoot();
-            
+
+            //Alligning with first set of balls
             rotate(driveSpeed, 37);
-            
-            strafe(driveSpeed, 609.5);
-            
+            strafe(driveSpeed, 304.8);
+
+            //Driving into balls with intake (slam into wall to intake)
             intakeMotor.setPower(1);
             encoderDrive(driveSpeed, 1219);
+            sleep(250);
             intakeMotor.setPower(0);
-            encoderDrive(-driveSpeed, 1219);
-            
-            strafe(-driveSpeed, 609.5);
-            
-            rotate(-driveSpeed, 37);
-            
+
+            //Getting back to shooting position (initial pos cause -ve same distance)
+            encoderDrive(-driveSpeed, 1035);
+            strafe(-driveSpeed, 304.8);
+            rotate(driveSpeed, -37);
+
+            //Score final 3 elements
             shoot();
-            
+
+            //Strafe off of Launch Line
             strafe(driveSpeed, 500);
             
-        
+            //Turn off motors just in case
             frontLeft.setPower(0);
             frontRight.setPower(0);
             backLeft.setPower(0);
