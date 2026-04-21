@@ -211,8 +211,10 @@ public class Simple_Auto extends LinearOpMode {
         if(opModeIsActive()) {
             
             encoderDrive(driveSpeed, -500);
-            
+
+            intakeMotor.setPower(-1);
             setFlywheelRPM(2000);
+            sleep(100);
             intakeMotor.setPower(1);
             
             sleep(5000);
